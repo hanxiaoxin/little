@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .video-wrap{
+            position: fixed;
+            left:0;
+            top:0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .video{
+            position: absolute;
+            bottom:0;
+            width: 100%;
+            height: auto;
+        }
+
+        #player{
+            z-index: 10;
+            margin:40px 40px;
+        }
+    </style>
+</head>
+<body>
+<div class="video-wrap">
+    <video src="./videos/stage3.mp4" loop="loop" muted="muted" class="video">您的浏览器不支持 video 标签。</video>
+</div>
+<div id="player"></div>
+<script src="./uncompiled/little-player.js"></script>
+<script>
+    const video = document.querySelector("video");
+    video.play();
+
+    var player = new LitterPlayer({
+        container: document.getElementById("player")
+    });
+    player.load({
+        url: "./audios/manxian.mp3",
+        title: "漫仙-盐果君"
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+@keyframes music-dance {
+    0% {
+        -webkit-transform: scaleY(0);
+        transform: scaleY(0)
+    }
+
+    to {
+        -webkit-transform: scaleY(1);
+        transform: scaleY(1)
+    }
+}
+
+.little-player-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    border: 1px solid hsla(0,0%,100%,.32);
+    box-sizing: border-box;
+    z-index: 10;
+    width: 135px;
+    height: auto;
+    position: relative;
+}
+
+.little-player-self{
+    width: 100%;
+    height: 32px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.little-player-controller{
+    width: 100%;
+    height: 135px;
+    background-image: url("https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/manxian.jpg");
+    background-size: cover;
+    background-position: 50%;
+    background-repeat: no-repeat;
+}
+
+.little-player-play-title {
+    font-size: 14px;
+    color: #fff;
+    width: 100px;
+    height: 32px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
+}
+
+.little-player-play-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.little-player-column {
+    width: 2px;
+    height: 14px;
+    margin-right: 2px;
+    background-color: #fff;
+    transform-origin: center bottom;
+    animation: music-dance 1s linear infinite;
+}
+
+.little-player-play-icon:first-child {
+    animation-delay: .2s;
+}
+
+.little-player-play-icon:nth-child(2) {
+    animation-delay: .5s;
+}
+
+.little-player-play-icon:nth-child(3) {
+    animation-delay: .75s;
+}
+
+.little-player-play-icon:last-child {
+    animation-delay: 1s;
+}
