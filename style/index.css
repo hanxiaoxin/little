@@ -10,7 +10,20 @@
     }
 }
 
+@keyframes title-dance {
+    0% {
+        -webkit-transform: translateX(100%);
+        transform: translateX(100%);
+    }
+
+    to {
+        -webkit-transform: translateX(-100%);
+        transform: translateX(-100%);
+    }
+}
+
 .little-player-container{
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -20,7 +33,6 @@
     z-index: 10;
     width: 135px;
     height: auto;
-    position: relative;
 }
 
 .little-player-self{
@@ -33,6 +45,7 @@
 }
 
 .little-player-controller{
+    position: relative;
     width: 100%;
     height: 135px;
     background-image: url("https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/manxian.jpg");
@@ -68,20 +81,118 @@
     background-color: #fff;
     transform-origin: center bottom;
     animation: music-dance 1s linear infinite;
+    animation-direction: reverse;
 }
 
-.little-player-play-icon:first-child {
+.little-player-column:first-child {
+    transform: scaleY(0.25);
+}
+
+.little-player-column:nth-child(2) {
+    transform: scaleY(0.55);
     animation-delay: .2s;
 }
 
-.little-player-play-icon:nth-child(2) {
-    animation-delay: .5s;
+.little-player-column:nth-child(3) {
+    transform: scaleY(0.75);
+    animation-delay: .4s;
 }
 
-.little-player-play-icon:nth-child(3) {
-    animation-delay: .75s;
+.little-player-column:last-child {
+    animation-delay: .6s;
 }
 
-.little-player-play-icon:last-child {
-    animation-delay: 1s;
+.little-player-play-title{
+    overflow: hidden;
 }
+
+.little-player-play-title-box{
+    width: 100%;
+    animation: title-dance 5s linear infinite;
+}
+
+
+.little-player-control-wrap{
+    position: absolute;
+    width: 135px;
+    height: 32px;
+    bottom: 4px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.little-control-before{
+    cursor: pointer;
+    width: 45px;
+    height: 32px;
+    background-image: url("https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/next.png");
+    transform: rotate(180deg);
+}
+
+.little-control-before:hover{
+    background-image: url("https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/before.png");
+}
+
+.little-control-play {
+    cursor: pointer;
+    width: 45px;
+    height: 32px;
+    background-image: url("https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/play.png");
+}
+
+.little-control-play:hover {
+    background-image: url("https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/hover.png");
+}
+
+.little-control-after{
+    cursor: pointer;
+    width: 45px;
+    height: 32px;
+    background-image: url("https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/next.png");
+}
+
+.little-control-after:hover{
+    background-image: url("https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/before.png");
+}
+
+.little-progress-wrap {
+    width: 100%;
+    height: 4px;
+    position: absolute;
+    left:0;
+    bottom:0;
+    background-color: #000;
+    cursor: pointer;
+    transform-origin: center bottom;
+    transition: all 0.15s;
+    font-size:0;
+    box-sizing: border-box;
+}
+
+.little-progress-wrap:hover{
+    transform: scaleY(1.5);
+}
+
+.little-player-play-progress {
+    background-color: #3a91ff;
+    position: absolute;
+    left:0;
+    top:0;
+    height: 100%;
+    width: 50%;
+    transition: all 0.15s;
+}
+
+.little-player-buffer-progress {
+    background-color: #838b8b;
+    position: absolute;
+    left:0;
+    top:0;
+    height: 100%;
+    transform-origin: center bottom;
+}
+
+
+

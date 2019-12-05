@@ -5,7 +5,7 @@ export default class Controller {
     constructor(player) {
         this.player = player;
         this.player.options.autioElement = document.getElementById("little-player-audio");
-        this.player.options.titleElement = document.querySelector(".little-player-play-title");
+        this.player.options.titleElement = document.querySelector(".little-player-play-title-box");
     }
 
     setSource(url) {

@@ -9,7 +9,7 @@ import LittlePlayer from 'little';
 
 var player = new LittlePlayer(
     {
-        container: document.getElementById("#littleBox")
+        container: document.getElementById("littleBox")
     }
 )
 ```
