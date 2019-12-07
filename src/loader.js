@@ -13,11 +13,10 @@ export default class Loader {
 
     load(target) {
         this.destroy();
-        const {url, title} = target;
         // about controller ??
         this.abortController = new AbortController();
-        this.player.setOptions({title: title, url: url});
-        this.player.controller.setSource(url);
+        this.player.setOptions(target);
+        this.player.controller.setSource(target);
     }
 
     destroy() {

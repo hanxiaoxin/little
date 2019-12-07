@@ -3,7 +3,7 @@
  */
 const containerHTML = `
 <div class="little-player-container">
-    <div class="little-player-self">
+    <div class="little-player-self little-info-default">
         <div class="little-player-play-icon">
             <span class="little-player-column"></span>
             <span class="little-player-column"></span>
@@ -17,17 +17,14 @@ const containerHTML = `
     <div class="little-player-controller">
         <div class="little-player-control-wrap">
              <div class="little-control-before"></div>
-             <div class="little-control-play"></div>
+             <div class="little-control-play" id="little-play-pause"></div>
              <div class="little-control-after"></div>
         </div>
-        <div class="little-progress-wrap">
-             <div class="little-player-play-progress"></div>
-             <div class="little-player-buffer-progress"></div>
-        </div>
+        <div class="little-progress-wrap"><div class="little-player-play-progress"></div><div class="little-player-buffer-progress"></div></div>
     </div>
 </div>
 
-<audio id="little-player-audio" autoplay="true"></audio>
+<audio id="little-player-audio" preload="auto"></audio>
 `;
 
 

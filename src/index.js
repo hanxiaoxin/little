@@ -56,6 +56,8 @@ export default class LittlePlayer  extends Emitter {
             padding: 5,
             waveScale: 0.8,
             pixelRatio: window.devicePixelRatio,
+            autoPlay: false, // 自动播放
+            playing:  false, // 是否正在播放
         };
     }
 
@@ -100,6 +102,8 @@ export default class LittlePlayer  extends Emitter {
             padding: checkNum('padding', 1, 100, true),
             waveScale: checkNum('waveScale', 0.1, 10, false),
             pixelRatio: checkNum('pixelRatio', 1, 10, false),
+            autoPlay: 'boolean',
+            playing: 'boolean'
         };
     }
 
@@ -116,8 +120,8 @@ export default class LittlePlayer  extends Emitter {
         this.template = new Template(this);
         this.decoder = new Decoder(this);
         this.drawer = new Drawer(this);
-        this.controller = new Controller(this);
         this.loader = new Loader(this);
+        this.controller = new Controller(this);
 
 
         id += 1;

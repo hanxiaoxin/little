@@ -36,12 +36,14 @@
     const video = document.querySelector("video");
     video.play();
 
-    var player = new LitterPlayer({
-        container: document.getElementById("player")
-    });
+    var player = new LitterPlayer(
+        {
+            container: document.getElementById("player"),
+            autoPlay: true
+        });
     player.load({
         url: "./audios/manxian.mp3",
-        title: "漫仙-盐果君"
+        title: "漫仙-盐果君",
     });
 </script>
 </body>

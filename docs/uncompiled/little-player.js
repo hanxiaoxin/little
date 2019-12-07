@@ -362,7 +362,7 @@
   /**
    * 模板
    */
-  var containerHTML = "\n<div class=\"little-player-container\">\n    <div class=\"little-player-self\">\n        <div class=\"little-player-play-icon\">\n            <span class=\"little-player-column\"></span>\n            <span class=\"little-player-column\"></span>\n            <span class=\"little-player-column\"></span>\n            <span class=\"little-player-column\"></span>\n        </div>\n        <div class=\"little-player-play-title\">\n            <div class=\"little-player-play-title-box\"></div>\n        </div>\n    </div>\n    <div class=\"little-player-controller\">\n        <div class=\"little-player-control-wrap\">\n             <div class=\"little-control-before\"></div>\n             <div class=\"little-control-play\"></div>\n             <div class=\"little-control-after\"></div>\n        </div>\n        <div class=\"little-progress-wrap\">\n             <div class=\"little-player-play-progress\"></div>\n             <div class=\"little-player-buffer-progress\"></div>\n        </div>\n    </div>\n</div>\n\n<audio id=\"little-player-audio\" autoplay=\"true\"></audio>\n";
+  var containerHTML = "\n<div class=\"little-player-container\">\n    <div class=\"little-player-self little-info-default\">\n        <div class=\"little-player-play-icon\">\n            <span class=\"little-player-column\"></span>\n            <span class=\"little-player-column\"></span>\n            <span class=\"little-player-column\"></span>\n            <span class=\"little-player-column\"></span>\n        </div>\n        <div class=\"little-player-play-title\">\n            <div class=\"little-player-play-title-box\"></div>\n        </div>\n    </div>\n    <div class=\"little-player-controller\">\n        <div class=\"little-player-control-wrap\">\n             <div class=\"little-control-before\"></div>\n             <div class=\"little-control-play\" id=\"little-play-pause\"></div>\n             <div class=\"little-control-after\"></div>\n        </div>\n        <div class=\"little-progress-wrap\"><div class=\"little-player-play-progress\"></div><div class=\"little-player-buffer-progress\"></div></div>\n    </div>\n</div>\n\n<audio id=\"little-player-audio\" preload=\"auto\"></audio>\n";
 
   var Template =
   /*#__PURE__*/
@@ -407,9 +407,14 @@
     this.player = player;
   };
 
+  var optionValidator = createCommonjsModule(function (module, exports) {
+  !function(r,t){module.exports=t();}(commonjsGlobal,function(){function e(r){return (e="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(r){return typeof r}:function(r){return r&&"function"==typeof Symbol&&r.constructor===Symbol&&r!==Symbol.prototype?"symbol":typeof r})(r)}var n=Object.prototype.toString,c=function(r){if(void 0===r)return "undefined";if(null===r)return "null";var t=e(r);if("boolean"===t)return "boolean";if("string"===t)return "string";if("number"===t)return "number";if("symbol"===t)return "symbol";if("function"===t)return function(r){return "GeneratorFunction"===o(r)}(r)?"generatorfunction":"function";if(function(r){return Array.isArray?Array.isArray(r):r instanceof Array}(r))return "array";if(function(r){if(r.constructor&&"function"==typeof r.constructor.isBuffer)return r.constructor.isBuffer(r);return !1}(r))return "buffer";if(function(r){try{if("number"==typeof r.length&&"function"==typeof r.callee)return !0}catch(r){if(-1!==r.message.indexOf("callee"))return !0}return !1}(r))return "arguments";if(function(r){return r instanceof Date||"function"==typeof r.toDateString&&"function"==typeof r.getDate&&"function"==typeof r.setDate}(r))return "date";if(function(r){return r instanceof Error||"string"==typeof r.message&&r.constructor&&"number"==typeof r.constructor.stackTraceLimit}(r))return "error";if(function(r){return r instanceof RegExp||"string"==typeof r.flags&&"boolean"==typeof r.ignoreCase&&"boolean"==typeof r.multiline&&"boolean"==typeof r.global}(r))return "regexp";switch(o(r)){case"Symbol":return "symbol";case"Promise":return "promise";case"WeakMap":return "weakmap";case"WeakSet":return "weakset";case"Map":return "map";case"Set":return "set";case"Int8Array":return "int8array";case"Uint8Array":return "uint8array";case"Uint8ClampedArray":return "uint8clampedarray";case"Int16Array":return "int16array";case"Uint16Array":return "uint16array";case"Int32Array":return "int32array";case"Uint32Array":return "uint32array";case"Float32Array":return "float32array";case"Float64Array":return "float64array"}if(function(r){return "function"==typeof r.throw&&"function"==typeof r.return&&"function"==typeof r.next}(r))return "generator";switch(t=n.call(r)){case"[object Object]":return "object";case"[object Map Iterator]":return "mapiterator";case"[object Set Iterator]":return "setiterator";case"[object String Iterator]":return "stringiterator";case"[object Array Iterator]":return "arrayiterator"}return t.slice(8,-1).toLowerCase().replace(/\s/g,"")};function o(r){return r.constructor?r.constructor.name:null}function f(r,t){var e=2<arguments.length&&void 0!==arguments[2]?arguments[2]:["option"];return s(r,t,e),y(r,t,e),function(a,i,u){var r=c(i),t=c(a);if("object"===r){if("object"!==t)throw new Error("[Type Error]: '".concat(u.join("."),"' require 'object' type, but got '").concat(t,"'"));Object.keys(i).forEach(function(r){var t=a[r],e=i[r],n=u.slice();n.push(r),s(t,e,n),y(t,e,n),f(t,e,n);});}if("array"===r){if("array"!==t)throw new Error("[Type Error]: '".concat(u.join("."),"' require 'array' type, but got '").concat(t,"'"));a.forEach(function(r,t){var e=a[t],n=i[t]||i[0],o=u.slice();o.push(t),s(e,n,o),y(e,n,o),f(e,n,o);});}}(r,t,e),r}function s(r,t,e){if("string"===c(t)){var n=c(r);if(!(-1<t.indexOf("|")?t.split("|").map(function(r){return r.toLowerCase().trim()}).filter(Boolean).some(function(r){return n===r}):t.toLowerCase().trim()===n))throw new Error("[Type Error]: '".concat(e.join("."),"' require '").concat(t,"' type, but got '").concat(n,"'"))}}function y(r,t,e){if("function"===c(t)){var n=t(r,c(r),e);if(!0!==n){var o=c(n);throw "string"===o?new Error(n):"error"===o?n:new Error("[Validator Error]: The scheme for '".concat(e.join("."),"' validator require return true, but got '").concat(n,"'"))}}}return f.kindOf=c,f});
+  });
+
   /**
    * 控制器
    */
+
   var Controller =
   /*#__PURE__*/
   function () {
@@ -417,25 +422,101 @@
       classCallCheck(this, Controller);
 
       this.player = player;
-      this.player.options.autioElement = document.getElementById("little-player-audio");
-      this.player.options.titleElement = document.querySelector(".little-player-play-title-box");
+      this.init();
+      this.listen();
     }
 
     createClass(Controller, [{
+      key: "init",
+      value: function init() {
+        var _this = this;
+
+        this.player.options.autioElement = document.getElementById("little-player-audio");
+        this.player.options.titleElement = document.querySelector(".little-player-play-title-box"); // 进度条hover
+
+        this.player.options.progressWrapElement = document.querySelector('.little-progress-wrap');
+        this.player.options.progressWrapElement.addEventListener('mouseover', function () {
+          if (_this.player.options.progressWrapElement.classList.contains('none-thick')) {
+            _this.player.options.progressWrapElement.classList.replace('none-thick', 'thick');
+          } else {
+            _this.player.options.progressWrapElement.classList.add('thick');
+          }
+        });
+        this.player.options.progressWrapElement.addEventListener('mouseout', function () {
+          _this.player.options.progressWrapElement.classList.replace('thick', 'none-thick');
+        }); // 信息hover
+
+        this.player.options.infoElement = document.querySelector('.little-player-self');
+        this.player.options.controlWrapElement = document.querySelector('.little-player-control-wrap');
+
+        var Addfn = function Addfn() {
+          _this.player.options.infoElement.classList.replace('little-info-default', 'little-info-active');
+
+          _this.player.options.infoElement.classList.add('hover');
+        };
+
+        var removeFn = function removeFn() {
+          _this.player.options.infoElement.classList.replace('little-info-active', 'little-info-default');
+
+          _this.player.options.infoElement.classList.remove('hover');
+        };
+
+        this.player.options.controlWrapElement.addEventListener('mouseover', Addfn);
+        this.player.options.progressWrapElement.addEventListener('mouseover', Addfn);
+        this.player.options.controlWrapElement.addEventListener('mouseout', removeFn);
+        this.player.options.progressWrapElement.addEventListener('mouseout', removeFn);
+        this.player.options.controlWrapElement = document.querySelector('.little-player-control-wrap');
+        this.player.options.controlPlayAndPauseElement = document.querySelector('.little-control-play'); // 自动播放
+
+        if (this.player.options.autoPlay) {
+          this.play();
+        }
+      }
+    }, {
+      key: "listen",
+      value: function listen() {
+        var _this2 = this;
+
+        this.player.options.controlPlayAndPauseElement.addEventListener('click', function () {
+          if (_this2.player.options.playing) {
+            _this2.pause();
+          } else {
+            _this2.play();
+          }
+        });
+      }
+    }, {
       key: "setSource",
-      value: function setSource(url) {
-        this.player.options.autioElement.setAttribute('src', url);
+      value: function setSource(target) {
+        errorHandle(target && target.url, 'audio url is invalid!');
+        this.player.options.autioElement.setAttribute('src', target.url);
+        this.player.options.autioElement.load();
         this.player.options.titleElement.innerHTML = this.player.options.title;
       }
     }, {
       key: "play",
       value: function play() {
-        this.player.options.autioElement.play();
+        var _this3 = this;
+
+        setTimeout(function () {
+          var playPromise = _this3.player.options.autioElement.play();
+
+          if (playPromise !== undefined) {
+            playPromise.then(function (_) {})["catch"](function (error) {
+              console.log(error);
+            });
+          }
+
+          _this3.player.options.playing = true;
+        }, 0);
+        this.player.options.controlPlayAndPauseElement.classList.replace('little-control-play', 'little-control-play-playing');
       }
     }, {
-      key: "stop",
-      value: function stop() {
-        this.player.options.autioElement.play();
+      key: "pause",
+      value: function pause() {
+        this.player.options.autioElement.pause();
+        this.player.options.playing = false;
+        this.player.options.controlPlayAndPauseElement.classList.replace('little-control-play-playing', 'little-control-play');
       }
     }]);
 
@@ -462,16 +543,11 @@
     createClass(Loader, [{
       key: "load",
       value: function load(target) {
-        this.destroy();
-        var url = target.url,
-            title = target.title; // about controller ??
+        this.destroy(); // about controller ??
 
         this.abortController = new AbortController();
-        this.player.setOptions({
-          title: title,
-          url: url
-        });
-        this.player.controller.setSource(url);
+        this.player.setOptions(target);
+        this.player.controller.setSource(target);
       }
     }, {
       key: "destroy",
@@ -494,10 +570,6 @@
 
     return Loader;
   }();
-
-  var optionValidator = createCommonjsModule(function (module, exports) {
-  !function(r,t){module.exports=t();}(commonjsGlobal,function(){function e(r){return (e="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(r){return typeof r}:function(r){return r&&"function"==typeof Symbol&&r.constructor===Symbol&&r!==Symbol.prototype?"symbol":typeof r})(r)}var n=Object.prototype.toString,c=function(r){if(void 0===r)return "undefined";if(null===r)return "null";var t=e(r);if("boolean"===t)return "boolean";if("string"===t)return "string";if("number"===t)return "number";if("symbol"===t)return "symbol";if("function"===t)return function(r){return "GeneratorFunction"===o(r)}(r)?"generatorfunction":"function";if(function(r){return Array.isArray?Array.isArray(r):r instanceof Array}(r))return "array";if(function(r){if(r.constructor&&"function"==typeof r.constructor.isBuffer)return r.constructor.isBuffer(r);return !1}(r))return "buffer";if(function(r){try{if("number"==typeof r.length&&"function"==typeof r.callee)return !0}catch(r){if(-1!==r.message.indexOf("callee"))return !0}return !1}(r))return "arguments";if(function(r){return r instanceof Date||"function"==typeof r.toDateString&&"function"==typeof r.getDate&&"function"==typeof r.setDate}(r))return "date";if(function(r){return r instanceof Error||"string"==typeof r.message&&r.constructor&&"number"==typeof r.constructor.stackTraceLimit}(r))return "error";if(function(r){return r instanceof RegExp||"string"==typeof r.flags&&"boolean"==typeof r.ignoreCase&&"boolean"==typeof r.multiline&&"boolean"==typeof r.global}(r))return "regexp";switch(o(r)){case"Symbol":return "symbol";case"Promise":return "promise";case"WeakMap":return "weakmap";case"WeakSet":return "weakset";case"Map":return "map";case"Set":return "set";case"Int8Array":return "int8array";case"Uint8Array":return "uint8array";case"Uint8ClampedArray":return "uint8clampedarray";case"Int16Array":return "int16array";case"Uint16Array":return "uint16array";case"Int32Array":return "int32array";case"Uint32Array":return "uint32array";case"Float32Array":return "float32array";case"Float64Array":return "float64array"}if(function(r){return "function"==typeof r.throw&&"function"==typeof r.return&&"function"==typeof r.next}(r))return "generator";switch(t=n.call(r)){case"[object Object]":return "object";case"[object Map Iterator]":return "mapiterator";case"[object Set Iterator]":return "setiterator";case"[object String Iterator]":return "stringiterator";case"[object Array Iterator]":return "arrayiterator"}return t.slice(8,-1).toLowerCase().replace(/\s/g,"")};function o(r){return r.constructor?r.constructor.name:null}function f(r,t){var e=2<arguments.length&&void 0!==arguments[2]?arguments[2]:["option"];return s(r,t,e),y(r,t,e),function(a,i,u){var r=c(i),t=c(a);if("object"===r){if("object"!==t)throw new Error("[Type Error]: '".concat(u.join("."),"' require 'object' type, but got '").concat(t,"'"));Object.keys(i).forEach(function(r){var t=a[r],e=i[r],n=u.slice();n.push(r),s(t,e,n),y(t,e,n),f(t,e,n);});}if("array"===r){if("array"!==t)throw new Error("[Type Error]: '".concat(u.join("."),"' require 'array' type, but got '").concat(t,"'"));a.forEach(function(r,t){var e=a[t],n=i[t]||i[0],o=u.slice();o.push(t),s(e,n,o),y(e,n,o),f(e,n,o);});}}(r,t,e),r}function s(r,t,e){if("string"===c(t)){var n=c(r);if(!(-1<t.indexOf("|")?t.split("|").map(function(r){return r.toLowerCase().trim()}).filter(Boolean).some(function(r){return n===r}):t.toLowerCase().trim()===n))throw new Error("[Type Error]: '".concat(e.join("."),"' require '").concat(t,"' type, but got '").concat(n,"'"))}}function y(r,t,e){if("function"===c(t)){var n=t(r,c(r),e);if(!0!==n){var o=c(n);throw "string"===o?new Error(n):"error"===o?n:new Error("[Validator Error]: The scheme for '".concat(e.join("."),"' validator require return true, but got '").concat(n,"'"))}}}return f.kindOf=c,f});
-  });
 
   function styleInject(css, ref) {
     if ( ref === void 0 ) ref = {};
@@ -526,7 +598,7 @@
     }
   }
 
-  var css = "@keyframes music-dance {\n    0% {\n        -webkit-transform: scaleY(0);\n        transform: scaleY(0)\n    }\n\n    to {\n        -webkit-transform: scaleY(1);\n        transform: scaleY(1)\n    }\n}\n\n@keyframes title-dance {\n    0% {\n        -webkit-transform: translateX(100%);\n        transform: translateX(100%);\n    }\n\n    to {\n        -webkit-transform: translateX(-100%);\n        transform: translateX(-100%);\n    }\n}\n\n.little-player-container{\n    position: relative;\n    display: flex;\n    flex-direction: column;\n    justify-content: flex-start;\n    align-items: center;\n    border: 1px solid hsla(0,0%,100%,.32);\n    box-sizing: border-box;\n    z-index: 10;\n    width: 135px;\n    height: auto;\n}\n\n.little-player-self{\n    width: 100%;\n    height: 32px;\n    display: flex;\n    flex-direction: row;\n    justify-content: flex-start;\n    align-items: center;\n}\n\n.little-player-controller{\n    position: relative;\n    width: 100%;\n    height: 135px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/manxian.jpg\");\n    background-size: cover;\n    background-position: 50%;\n    background-repeat: no-repeat;\n}\n\n.little-player-play-title {\n    font-size: 14px;\n    color: #fff;\n    width: 100px;\n    height: 32px;\n    display: flex;\n    flex-direction: row;\n    align-items: center;\n    overflow: hidden;\n}\n\n.little-player-play-icon {\n    width: 32px;\n    height: 32px;\n    display: flex;\n    flex-direction: row;\n    justify-content: center;\n    align-items: center;\n}\n\n.little-player-column {\n    width: 2px;\n    height: 14px;\n    margin-right: 2px;\n    background-color: #fff;\n    transform-origin: center bottom;\n    animation: music-dance 1s linear infinite;\n    animation-direction: reverse;\n}\n\n.little-player-column:first-child {\n    transform: scaleY(0.25);\n}\n\n.little-player-column:nth-child(2) {\n    transform: scaleY(0.55);\n    animation-delay: .2s;\n}\n\n.little-player-column:nth-child(3) {\n    transform: scaleY(0.75);\n    animation-delay: .4s;\n}\n\n.little-player-column:last-child {\n    animation-delay: .6s;\n}\n\n.little-player-play-title{\n    overflow: hidden;\n}\n\n.little-player-play-title-box{\n    width: 100%;\n    animation: title-dance 5s linear infinite;\n}\n\n\n.little-player-control-wrap{\n    position: absolute;\n    width: 135px;\n    height: 32px;\n    bottom: 4px;\n    display: flex;\n    flex-direction: row;\n    justify-content: center;\n    align-items: center;\n}\n\n.little-control-before{\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/next.png\");\n    transform: rotate(180deg);\n}\n\n.little-control-before:hover{\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/before.png\");\n}\n\n.little-control-play {\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/play.png\");\n}\n\n.little-control-play:hover {\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/hover.png\");\n}\n\n.little-control-after{\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/next.png\");\n}\n\n.little-control-after:hover{\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/before.png\");\n}\n\n.little-progress-wrap {\n    width: 100%;\n    height: 4px;\n    position: absolute;\n    left:0;\n    bottom:0;\n    background-color: #000;\n    cursor: pointer;\n    transform-origin: center bottom;\n    transition: all 0.15s;\n    font-size:0;\n    box-sizing: border-box;\n}\n\n.little-progress-wrap:hover{\n    transform: scaleY(1.5);\n}\n\n.little-player-play-progress {\n    background-color: #3a91ff;\n    position: absolute;\n    left:0;\n    top:0;\n    height: 100%;\n    width: 50%;\n    transition: all 0.15s;\n}\n\n.little-player-buffer-progress {\n    background-color: #838b8b;\n    position: absolute;\n    left:0;\n    top:0;\n    height: 100%;\n    transform-origin: center bottom;\n}\n\n\n\n";
+  var css = "@keyframes music-dance {\n    0% {\n        -webkit-transform: scaleY(0);\n        transform: scaleY(0)\n    }\n\n    to {\n        -webkit-transform: scaleY(1);\n        transform: scaleY(1)\n    }\n}\n\n@keyframes title-dance {\n    0% {\n        -webkit-transform: translateX(100%);\n        transform: translateX(100%);\n    }\n\n    to {\n        -webkit-transform: translateX(-100%);\n        transform: translateX(-100%);\n    }\n}\n\n@keyframes progressThick {\n    0% {\n        height: 4px;\n    }\n\n    to {\n        height: 6px;\n    }\n}\n\n@keyframes progressNoneThick {\n    0% {\n        height: 6px;\n    }\n\n    to {\n        height: 4px;\n    }\n}\n\n\n.little-player-container{\n    position: relative;\n    display: flex;\n    flex-direction: column;\n    justify-content: flex-start;\n    align-items: center;\n    border: 1px solid hsla(0,0%,100%,.32);\n    box-sizing: border-box;\n    z-index: 10;\n    width: 135px;\n    height: auto;\n}\n\n.little-player-self{\n    width: 100%;\n    height: 32px;\n    display: flex;\n    flex-direction: row;\n    justify-content: flex-start;\n    align-items: center;\n}\n\n.little-player-controller{\n    position: relative;\n    width: 100%;\n    height: 135px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/manxian.jpg\");\n    background-size: cover;\n    background-position: 50%;\n    background-repeat: no-repeat;\n}\n\n\n.little-player-play-title {\n    font-size: 14px;\n    width: 100px;\n    height: 32px;\n    display: flex;\n    flex-direction: row;\n    align-items: center;\n    overflow: hidden;\n}\n\n.little-player-play-icon {\n    width: 32px;\n    height: 32px;\n    display: flex;\n    flex-direction: row;\n    justify-content: center;\n    align-items: center;\n}\n\n.little-player-column {\n    width: 2px;\n    height: 14px;\n    margin-right: 2px;\n    transform-origin: center bottom;\n    animation: music-dance 1s linear infinite;\n    animation-direction: reverse;\n    background-color: #fff;\n}\n\n.hover .little-player-column {\n    width: 2px;\n    height: 14px;\n    margin-right: 2px;\n    transform-origin: center bottom;\n    animation: music-dance 1s linear infinite;\n    animation-direction: reverse;\n    background-color: #4becff;\n}\n\n.little-player-column:first-child {\n    transform: scaleY(0.25);\n}\n\n.little-player-column:nth-child(2) {\n    transform: scaleY(0.55);\n    animation-delay: .2s;\n}\n\n.little-player-column:nth-child(3) {\n    transform: scaleY(0.75);\n    animation-delay: .4s;\n}\n\n.little-player-column:last-child {\n    animation-delay: .6s;\n}\n\n.little-player-play-title{\n    overflow: hidden;\n}\n\n.little-player-play-title-box{\n    width: 100%;\n    animation: title-dance 5s linear infinite;\n}\n\n\n.little-player-control-wrap{\n    position: absolute;\n    width: 135px;\n    height: 32px;\n    bottom: 4px;\n    display: flex;\n    flex-direction: row;\n    justify-content: center;\n    align-items: center;\n}\n\n.little-control-before{\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/next.png\");\n    transform: rotate(180deg);\n}\n\n.little-control-before:hover{\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/before.png\");\n}\n\n.little-control-play {\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/play.png\");\n}\n\n.little-control-play:hover {\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/hover.png\");\n}\n\n.little-control-play-playing {\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/playing.png\");\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n}\n\n.little-control-play-playing:hover {\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/playing-ac.png\");\n\n}\n\n.little-control-after{\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/next.png\");\n}\n\n.little-control-after:hover{\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/before.png\");\n}\n\n.little-progress-wrap {\n    width: 100%;\n    height: 4px;\n    position: absolute;\n    left:0;\n    bottom:0;\n    background-color: #000;\n    cursor: pointer;\n    transform-origin: center bottom;\n    z-index: 0;\n}\n\n.thick {\n    animation: progressThick 0.15s forwards;\n}\n\n.none-thick {\n    animation: progressNoneThick 0.15s forwards;\n}\n\n.little-player-play-progress {\n    background-color: #3a91ff;\n    position: absolute;\n    left:0;\n    top:0;\n    height: 100%;\n    width: 50%;\n    transform-origin: center bottom;\n    z-index: 10;\n}\n\n.little-player-buffer-progress {\n    background-color: #838b8b;\n    position: absolute;\n    left:0;\n    top:0;\n    height: 100%;\n    transform-origin: center bottom;\n    z-index: 5;\n}\n\n.little-info-default {\n    color: #fff;\n}\n\n.little-info-active{\n    color: #4becff;\n}\n\n\n\n";
   styleInject(css);
 
   function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -589,7 +661,11 @@
           duration: 10,
           padding: 5,
           waveScale: 0.8,
-          pixelRatio: window.devicePixelRatio
+          pixelRatio: window.devicePixelRatio,
+          autoPlay: false,
+          // 自动播放
+          playing: false // 是否正在播放
+
         };
       }
       /**
@@ -632,7 +708,9 @@
           duration: checkNum('duration', 1, 100, true),
           padding: checkNum('padding', 1, 100, true),
           waveScale: checkNum('waveScale', 0.1, 10, false),
-          pixelRatio: checkNum('pixelRatio', 1, 10, false)
+          pixelRatio: checkNum('pixelRatio', 1, 10, false),
+          autoPlay: 'boolean',
+          playing: 'boolean'
         };
       }
     }]);
@@ -653,8 +731,8 @@
       _this.template = new Template(assertThisInitialized(_this));
       _this.decoder = new Decoder(assertThisInitialized(_this));
       _this.drawer = new Drawer(assertThisInitialized(_this));
-      _this.controller = new Controller(assertThisInitialized(_this));
       _this.loader = new Loader(assertThisInitialized(_this));
+      _this.controller = new Controller(assertThisInitialized(_this));
       id += 1;
       _this.id = id;
       instances.push(assertThisInitialized(_this));

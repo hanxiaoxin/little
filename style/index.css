@@ -22,6 +22,27 @@
     }
 }
 
+@keyframes progressThick {
+    0% {
+        height: 4px;
+    }
+
+    to {
+        height: 6px;
+    }
+}
+
+@keyframes progressNoneThick {
+    0% {
+        height: 6px;
+    }
+
+    to {
+        height: 4px;
+    }
+}
+
+
 .little-player-container{
     position: relative;
     display: flex;
@@ -54,9 +75,9 @@
     background-repeat: no-repeat;
 }
 
+
 .little-player-play-title {
     font-size: 14px;
-    color: #fff;
     width: 100px;
     height: 32px;
     display: flex;
@@ -78,10 +99,20 @@
     width: 2px;
     height: 14px;
     margin-right: 2px;
-    background-color: #fff;
     transform-origin: center bottom;
     animation: music-dance 1s linear infinite;
     animation-direction: reverse;
+    background-color: #fff;
+}
+
+.hover .little-player-column {
+    width: 2px;
+    height: 14px;
+    margin-right: 2px;
+    transform-origin: center bottom;
+    animation: music-dance 1s linear infinite;
+    animation-direction: reverse;
+    background-color: #4becff;
 }
 
 .little-player-column:first-child {
@@ -146,6 +177,21 @@
     background-image: url("https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/hover.png");
 }
 
+.little-control-play-playing {
+    background-image: url("https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/playing.png");
+    cursor: pointer;
+    width: 45px;
+    height: 32px;
+}
+
+.little-control-play-playing:hover {
+    cursor: pointer;
+    width: 45px;
+    height: 32px;
+    background-image: url("https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/playing-ac.png");
+
+}
+
 .little-control-after{
     cursor: pointer;
     width: 45px;
@@ -166,13 +212,15 @@
     background-color: #000;
     cursor: pointer;
     transform-origin: center bottom;
-    transition: all 0.15s;
-    font-size:0;
-    box-sizing: border-box;
+    z-index: 0;
 }
 
-.little-progress-wrap:hover{
-    transform: scaleY(1.5);
+.thick {
+    animation: progressThick 0.15s forwards;
+}
+
+.none-thick {
+    animation: progressNoneThick 0.15s forwards;
 }
 
 .little-player-play-progress {
@@ -182,7 +230,8 @@
     top:0;
     height: 100%;
     width: 50%;
-    transition: all 0.15s;
+    transform-origin: center bottom;
+    z-index: 10;
 }
 
 .little-player-buffer-progress {
@@ -192,6 +241,15 @@
     top:0;
     height: 100%;
     transform-origin: center bottom;
+    z-index: 5;
+}
+
+.little-info-default {
+    color: #fff;
+}
+
+.little-info-active{
+    color: #4becff;
 }
 
 
