@@ -3,7 +3,7 @@
 
 [示例地址demo](http://47.98.226.15/little/)
 
-[npm地址](https://www.npmjs.com/package/@nankle/little)
+[npm地址](./docs/demo.png)
 
 <img src="https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/little.png" width="350px" alt="demo">
 
