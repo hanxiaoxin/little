@@ -1,31 +1,36 @@
 {
-  "name": "little",
-  "version": "1.0.0",
-  "homepage": "",
-  "description": "little is large",
-  "main": "src/index.js",
-  "dependencies": {
-    "option-validator": "^2.0.5"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.7.4",
-    "@babel/plugin-external-helpers": "^7.7.4",
-    "@babel/plugin-transform-runtime": "^7.7.4",
-    "@babel/preset-env": "^7.7.4",
-    "@babel/runtime": "^7.7.4",
-    "cross-env": "^6.0.3",
-    "rollup": "^1.27.8",
-    "rollup-plugin-babel": "^4.3.3",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-postcss": "^2.0.3",
-    "rollup-plugin-uglify": "^6.0.3"
-  },
-  "scripts": {
-    "dev": "npx cross-env NODE_ENV=development rollup -c -m -w",
-    "build": "npx cross-env NODE_ENV=production rollup -c",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC"
+    "name": "@nankle/little",
+    "version": "1.0.0",
+    "homepage": "http://47.98.226.15/little/",
+    "maintainers": ["hanxiaoxin"],
+    "private": false,
+    "description": "little is large",
+    "main": "dist/little-player.js",
+    "files": [
+        "./dist"
+    ],
+    "dependencies": {
+        "option-validator": "^2.0.5"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.7.4",
+        "@babel/plugin-external-helpers": "^7.7.4",
+        "@babel/plugin-transform-runtime": "^7.7.4",
+        "@babel/preset-env": "^7.7.4",
+        "@babel/runtime": "^7.7.4",
+        "cross-env": "^6.0.3",
+        "rollup": "^1.27.8",
+        "rollup-plugin-babel": "^4.3.3",
+        "rollup-plugin-commonjs": "^10.1.0",
+        "rollup-plugin-node-resolve": "^5.2.0",
+        "rollup-plugin-postcss": "^2.0.3",
+        "rollup-plugin-uglify": "^6.0.3"
+    },
+    "scripts": {
+        "dev": "npx cross-env NODE_ENV=development rollup -c -m -w",
+        "build": "npx cross-env NODE_ENV=production rollup -c",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC"
 }
