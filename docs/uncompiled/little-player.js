@@ -424,8 +424,7 @@
         this.player.options.controlPlayAndPauseElement = document.querySelector('.little-control-play'); // 显示控制区
 
         window.addEventListener('click', function (event) {
-          console.log(event, event.target);
-
+          // console.log(event, event.target);
           if (!_this.player.options.containerElement.contains(event.target)) {
             _this.player.options.controllerElement.classList.replace('little-player-controller-hover', 'little-player-controller-hide');
           }
@@ -551,6 +550,12 @@
           _this.seek(seekTime);
         }); // 切换播放列表
 
+        this.player.on('loadEndFirst', function (info) {
+          var cover = info.cover || _this.player.options.defaultCover;
+          _this.player.options.controllerElement.style.backgroundImage = "url(" + cover + ")";
+
+          _this.pause();
+        });
         this.player.on('loadEnd', function (info) {
           var cover = info.cover || _this.player.options.defaultCover;
           _this.player.options.controllerElement.style.backgroundImage = "url(" + cover + ")";
@@ -669,7 +674,13 @@
       value: function start() {
         this.currentPlayInfo = this.playList[this.playListIndex];
         this.player.controller.setSource(this.currentPlayInfo.url);
-        this.player.emit('loadEnd', this.currentPlayInfo);
+
+        if (!this.player.options.autoPlay && this.player.options.firstPlay) {
+          this.player.emit('loadEndFirst', this.currentPlayInfo);
+          this.player.options.firstPlay = false;
+        } else {
+          this.player.emit('loadEnd', this.currentPlayInfo);
+        }
       }
     }, {
       key: "destroy",
@@ -784,6 +795,8 @@
           padding: 5,
           waveScale: 0.8,
           pixelRatio: window.devicePixelRatio,
+          firstPlay: true,
+          // 首次播放
           autoPlay: false,
           // 自动播放
           playing: false,
@@ -835,7 +848,8 @@
           pixelRatio: checkNum('pixelRatio', 1, 10, false),
           autoPlay: 'boolean',
           playing: 'boolean',
-          defaultCover: 'string'
+          defaultCover: 'string',
+          firstPlay: 'boolean'
         };
       }
     }]);

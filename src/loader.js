@@ -54,7 +54,12 @@ export default class Loader {
     start() {
         this.currentPlayInfo = this.playList[this.playListIndex];
         this.player.controller.setSource(this.currentPlayInfo.url);
-        this.player.emit('loadEnd', this.currentPlayInfo);
+        if(!this.player.options.autoPlay && this.player.options.firstPlay) {
+            this.player.emit('loadEndFirst', this.currentPlayInfo);
+            this.player.options.firstPlay = false;
+        } else {
+            this.player.emit('loadEnd', this.currentPlayInfo);
+        }
     }
 
     destroy() {

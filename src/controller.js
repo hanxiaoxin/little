@@ -56,6 +56,12 @@ export default class Controller {
         });
 
         // 切换播放列表
+        this.player.on('loadEndFirst', (info) => {
+            const cover = info.cover || this.player.options.defaultCover;
+            this.player.options.controllerElement.style.backgroundImage = "url(" + cover + ")";
+            this.pause();
+        });
+
         this.player.on('loadEnd', (info) => {
             const cover = info.cover || this.player.options.defaultCover;
             this.player.options.controllerElement.style.backgroundImage = "url(" + cover + ")";

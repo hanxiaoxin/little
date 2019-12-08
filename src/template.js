@@ -85,7 +85,7 @@ export default class Template {
 
         // 显示控制区
         window.addEventListener('click', (event) => {
-           console.log(event, event.target);
+           // console.log(event, event.target);
            if(!this.player.options.containerElement.contains(event.target)) {
                this.player.options.controllerElement.classList.replace('little-player-controller-hover', 'little-player-controller-hide');
            }
