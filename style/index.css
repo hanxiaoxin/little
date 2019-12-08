@@ -100,9 +100,12 @@
     height: 14px;
     margin-right: 2px;
     transform-origin: center bottom;
+    background-color: #fff;
+}
+
+.little-playing .little-player-column {
     animation: music-dance 1s linear infinite;
     animation-direction: reverse;
-    background-color: #fff;
 }
 
 .hover .little-player-column {
@@ -110,8 +113,8 @@
     height: 14px;
     margin-right: 2px;
     transform-origin: center bottom;
-    animation: music-dance 1s linear infinite;
-    animation-direction: reverse;
+    /*animation: music-dance 1s linear infinite;*/
+    /*animation-direction: reverse;*/
     background-color: #4becff;
 }
 
@@ -137,7 +140,7 @@
     overflow: hidden;
 }
 
-.little-player-play-title-box{
+.little-player-play-title-prefix .little-player-play-title-box{
     width: 100%;
     animation: title-dance 5s linear infinite;
 }
@@ -229,7 +232,7 @@
     left:0;
     top:0;
     height: 100%;
-    width: 50%;
+    /*width: 50%;*/
     transform-origin: center bottom;
     z-index: 10;
 }

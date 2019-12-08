@@ -362,7 +362,7 @@
   /**
    * 模板
    */
-  var containerHTML = "\n<div class=\"little-player-container\">\n    <div class=\"little-player-self little-info-default\">\n        <div class=\"little-player-play-icon\">\n            <span class=\"little-player-column\"></span>\n            <span class=\"little-player-column\"></span>\n            <span class=\"little-player-column\"></span>\n            <span class=\"little-player-column\"></span>\n        </div>\n        <div class=\"little-player-play-title\">\n            <div class=\"little-player-play-title-box\"></div>\n        </div>\n    </div>\n    <div class=\"little-player-controller\">\n        <div class=\"little-player-control-wrap\">\n             <div class=\"little-control-before\"></div>\n             <div class=\"little-control-play\" id=\"little-play-pause\"></div>\n             <div class=\"little-control-after\"></div>\n        </div>\n        <div class=\"little-progress-wrap\"><div class=\"little-player-play-progress\"></div><div class=\"little-player-buffer-progress\"></div></div>\n    </div>\n</div>\n\n<audio id=\"little-player-audio\" preload=\"auto\"></audio>\n";
+  var containerHTML = "\n<div class=\"little-player-container\">\n    <div class=\"little-player-self little-info-default\">\n        <div class=\"little-player-play-icon little-playing\">\n            <span class=\"little-player-column\"></span>\n            <span class=\"little-player-column\"></span>\n            <span class=\"little-player-column\"></span>\n            <span class=\"little-player-column\"></span>\n        </div>\n        <div class=\"little-player-play-title little-player-play-title-prefix\">\n            <div class=\"little-player-play-title-box\"></div>\n        </div>\n    </div>\n    <div class=\"little-player-controller\">\n        <div class=\"little-player-control-wrap\">\n             <div class=\"little-control-before\"></div>\n             <div class=\"little-control-play\" id=\"little-play-pause\"></div>\n             <div class=\"little-control-after\"></div>\n        </div>\n        <div class=\"little-progress-wrap\">\n            <div class=\"little-player-play-progress\"></div>\n            <div class=\"little-player-buffer-progress\"></div>\n        </div>\n    </div>\n</div>\n\n<audio id=\"little-player-audio\" preload=\"auto\"></audio>\n";
 
   var Template =
   /*#__PURE__*/
@@ -372,9 +372,61 @@
 
       this.player = player;
       this.update();
+      this.listen();
     }
 
     createClass(Template, [{
+      key: "listen",
+      value: function listen() {
+        var _this = this;
+
+        this.player.options.autioElement = document.getElementById("little-player-audio");
+        this.player.options.titleBoxElement = document.querySelector(".little-player-play-title-box");
+        this.player.options.titleElement = document.querySelector('.little-player-play-title');
+        this.player.options.audioIconElement = document.querySelector('.little-player-play-icon');
+        this.player.options.progressElement = document.querySelector('.little-player-play-progress');
+        this.player.options.progressWrapElement = document.querySelector('.little-progress-wrap');
+        this.player.options.infoElement = document.querySelector('.little-player-self');
+        this.player.options.controlWrapElement = document.querySelector('.little-player-control-wrap'); // 进度条hover
+
+        this.player.options.progressWrapElement.addEventListener('mouseover', function () {
+          if (_this.player.options.progressWrapElement.classList.contains('none-thick')) {
+            _this.player.options.progressWrapElement.classList.replace('none-thick', 'thick');
+          } else {
+            _this.player.options.progressWrapElement.classList.add('thick');
+          }
+        });
+        this.player.options.progressWrapElement.addEventListener('mouseout', function () {
+          _this.player.options.progressWrapElement.classList.replace('thick', 'none-thick');
+        }); // 信息hover
+
+        var Addfn = function Addfn() {
+          _this.player.options.infoElement.classList.replace('little-info-default', 'little-info-active');
+
+          _this.player.options.infoElement.classList.add('hover');
+        };
+
+        var removeFn = function removeFn() {
+          _this.player.options.infoElement.classList.replace('little-info-active', 'little-info-default');
+
+          _this.player.options.infoElement.classList.remove('hover');
+        };
+
+        this.player.options.controlWrapElement.addEventListener('mouseover', Addfn);
+        this.player.options.progressWrapElement.addEventListener('mouseover', Addfn);
+        this.player.options.controlWrapElement.addEventListener('mouseout', removeFn);
+        this.player.options.progressWrapElement.addEventListener('mouseout', removeFn);
+        this.player.options.controlWrapElement = document.querySelector('.little-player-control-wrap');
+        this.player.options.controlPlayAndPauseElement = document.querySelector('.little-control-play'); // 进度条计算
+
+        var TotalWidth = this.player.options.progressWrapElement.clientWidth;
+        this.player.on('currentTime', function (currentTime) {
+          var duration = _this.player.options.duration;
+          var width = currentTime / duration * TotalWidth;
+          _this.player.options.progressElement.style.width = width + 'px';
+        });
+      }
+    }, {
       key: "update",
       value: function update() {
         this.player.options.container.innerHTML = containerHTML;
@@ -429,45 +481,7 @@
     createClass(Controller, [{
       key: "init",
       value: function init() {
-        var _this = this;
-
-        this.player.options.autioElement = document.getElementById("little-player-audio");
-        this.player.options.titleElement = document.querySelector(".little-player-play-title-box"); // 进度条hover
-
-        this.player.options.progressWrapElement = document.querySelector('.little-progress-wrap');
-        this.player.options.progressWrapElement.addEventListener('mouseover', function () {
-          if (_this.player.options.progressWrapElement.classList.contains('none-thick')) {
-            _this.player.options.progressWrapElement.classList.replace('none-thick', 'thick');
-          } else {
-            _this.player.options.progressWrapElement.classList.add('thick');
-          }
-        });
-        this.player.options.progressWrapElement.addEventListener('mouseout', function () {
-          _this.player.options.progressWrapElement.classList.replace('thick', 'none-thick');
-        }); // 信息hover
-
-        this.player.options.infoElement = document.querySelector('.little-player-self');
-        this.player.options.controlWrapElement = document.querySelector('.little-player-control-wrap');
-
-        var Addfn = function Addfn() {
-          _this.player.options.infoElement.classList.replace('little-info-default', 'little-info-active');
-
-          _this.player.options.infoElement.classList.add('hover');
-        };
-
-        var removeFn = function removeFn() {
-          _this.player.options.infoElement.classList.replace('little-info-active', 'little-info-default');
-
-          _this.player.options.infoElement.classList.remove('hover');
-        };
-
-        this.player.options.controlWrapElement.addEventListener('mouseover', Addfn);
-        this.player.options.progressWrapElement.addEventListener('mouseover', Addfn);
-        this.player.options.controlWrapElement.addEventListener('mouseout', removeFn);
-        this.player.options.progressWrapElement.addEventListener('mouseout', removeFn);
-        this.player.options.controlWrapElement = document.querySelector('.little-player-control-wrap');
-        this.player.options.controlPlayAndPauseElement = document.querySelector('.little-control-play'); // 自动播放
-
+        // 自动播放
         if (this.player.options.autoPlay) {
           this.play();
         }
@@ -475,14 +489,40 @@
     }, {
       key: "listen",
       value: function listen() {
-        var _this2 = this;
+        var _this = this;
+
+        // 音频时长
+        this.player.options.autioElement.addEventListener('canplay', function () {
+          _this.player.options.duration = _this.player.options.autioElement.duration;
+        }); // 进度变化
+
+        this.player.options.autioElement.addEventListener('timeupdate', function () {
+          _this.player.emit('currentTime', _this.player.options.autioElement.currentTime);
+        });
+        this.player.options.autioElement.addEventListener('ended', function () {
+          _this.player.emit('ended', _this.player.options.autioElement.currentTime);
+
+          _this.pause();
+
+          _this.seek(0);
+        }); // 播放器按钮
 
         this.player.options.controlPlayAndPauseElement.addEventListener('click', function () {
-          if (_this2.player.options.playing) {
-            _this2.pause();
+          if (_this.player.options.playing) {
+            _this.pause();
           } else {
-            _this2.play();
+            _this.play();
           }
+        });
+        this.player.options.progressWrapElement.addEventListener('click', function (event) {
+          var clientX = event.clientX;
+
+          var rect = _this.player.options.progressWrapElement.getBoundingClientRect();
+
+          var totalX = _this.player.options.progressWrapElement.clientWidth;
+          var seekTime = (clientX - rect.left) / totalX * _this.player.options.duration;
+
+          _this.seek(seekTime);
         });
       }
     }, {
@@ -491,15 +531,15 @@
         errorHandle(target && target.url, 'audio url is invalid!');
         this.player.options.autioElement.setAttribute('src', target.url);
         this.player.options.autioElement.load();
-        this.player.options.titleElement.innerHTML = this.player.options.title;
+        this.player.options.titleBoxElement.innerHTML = this.player.options.title;
       }
     }, {
       key: "play",
       value: function play() {
-        var _this3 = this;
+        var _this2 = this;
 
         setTimeout(function () {
-          var playPromise = _this3.player.options.autioElement.play();
+          var playPromise = _this2.player.options.autioElement.play();
 
           if (playPromise !== undefined) {
             playPromise.then(function (_) {})["catch"](function (error) {
@@ -507,9 +547,10 @@
             });
           }
 
-          _this3.player.options.playing = true;
+          _this2.player.options.playing = true;
         }, 0);
         this.player.options.controlPlayAndPauseElement.classList.replace('little-control-play', 'little-control-play-playing');
+        this.player.options.audioIconElement.classList.add('little-playing');
       }
     }, {
       key: "pause",
@@ -517,6 +558,12 @@
         this.player.options.autioElement.pause();
         this.player.options.playing = false;
         this.player.options.controlPlayAndPauseElement.classList.replace('little-control-play-playing', 'little-control-play');
+        this.player.options.audioIconElement.classList.remove('little-playing');
+      }
+    }, {
+      key: "seek",
+      value: function seek(time) {
+        this.player.options.autioElement.currentTime = time;
       }
     }]);
 
@@ -598,7 +645,7 @@
     }
   }
 
-  var css = "@keyframes music-dance {\n    0% {\n        -webkit-transform: scaleY(0);\n        transform: scaleY(0)\n    }\n\n    to {\n        -webkit-transform: scaleY(1);\n        transform: scaleY(1)\n    }\n}\n\n@keyframes title-dance {\n    0% {\n        -webkit-transform: translateX(100%);\n        transform: translateX(100%);\n    }\n\n    to {\n        -webkit-transform: translateX(-100%);\n        transform: translateX(-100%);\n    }\n}\n\n@keyframes progressThick {\n    0% {\n        height: 4px;\n    }\n\n    to {\n        height: 6px;\n    }\n}\n\n@keyframes progressNoneThick {\n    0% {\n        height: 6px;\n    }\n\n    to {\n        height: 4px;\n    }\n}\n\n\n.little-player-container{\n    position: relative;\n    display: flex;\n    flex-direction: column;\n    justify-content: flex-start;\n    align-items: center;\n    border: 1px solid hsla(0,0%,100%,.32);\n    box-sizing: border-box;\n    z-index: 10;\n    width: 135px;\n    height: auto;\n}\n\n.little-player-self{\n    width: 100%;\n    height: 32px;\n    display: flex;\n    flex-direction: row;\n    justify-content: flex-start;\n    align-items: center;\n}\n\n.little-player-controller{\n    position: relative;\n    width: 100%;\n    height: 135px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/manxian.jpg\");\n    background-size: cover;\n    background-position: 50%;\n    background-repeat: no-repeat;\n}\n\n\n.little-player-play-title {\n    font-size: 14px;\n    width: 100px;\n    height: 32px;\n    display: flex;\n    flex-direction: row;\n    align-items: center;\n    overflow: hidden;\n}\n\n.little-player-play-icon {\n    width: 32px;\n    height: 32px;\n    display: flex;\n    flex-direction: row;\n    justify-content: center;\n    align-items: center;\n}\n\n.little-player-column {\n    width: 2px;\n    height: 14px;\n    margin-right: 2px;\n    transform-origin: center bottom;\n    animation: music-dance 1s linear infinite;\n    animation-direction: reverse;\n    background-color: #fff;\n}\n\n.hover .little-player-column {\n    width: 2px;\n    height: 14px;\n    margin-right: 2px;\n    transform-origin: center bottom;\n    animation: music-dance 1s linear infinite;\n    animation-direction: reverse;\n    background-color: #4becff;\n}\n\n.little-player-column:first-child {\n    transform: scaleY(0.25);\n}\n\n.little-player-column:nth-child(2) {\n    transform: scaleY(0.55);\n    animation-delay: .2s;\n}\n\n.little-player-column:nth-child(3) {\n    transform: scaleY(0.75);\n    animation-delay: .4s;\n}\n\n.little-player-column:last-child {\n    animation-delay: .6s;\n}\n\n.little-player-play-title{\n    overflow: hidden;\n}\n\n.little-player-play-title-box{\n    width: 100%;\n    animation: title-dance 5s linear infinite;\n}\n\n\n.little-player-control-wrap{\n    position: absolute;\n    width: 135px;\n    height: 32px;\n    bottom: 4px;\n    display: flex;\n    flex-direction: row;\n    justify-content: center;\n    align-items: center;\n}\n\n.little-control-before{\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/next.png\");\n    transform: rotate(180deg);\n}\n\n.little-control-before:hover{\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/before.png\");\n}\n\n.little-control-play {\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/play.png\");\n}\n\n.little-control-play:hover {\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/hover.png\");\n}\n\n.little-control-play-playing {\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/playing.png\");\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n}\n\n.little-control-play-playing:hover {\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/playing-ac.png\");\n\n}\n\n.little-control-after{\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/next.png\");\n}\n\n.little-control-after:hover{\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/before.png\");\n}\n\n.little-progress-wrap {\n    width: 100%;\n    height: 4px;\n    position: absolute;\n    left:0;\n    bottom:0;\n    background-color: #000;\n    cursor: pointer;\n    transform-origin: center bottom;\n    z-index: 0;\n}\n\n.thick {\n    animation: progressThick 0.15s forwards;\n}\n\n.none-thick {\n    animation: progressNoneThick 0.15s forwards;\n}\n\n.little-player-play-progress {\n    background-color: #3a91ff;\n    position: absolute;\n    left:0;\n    top:0;\n    height: 100%;\n    width: 50%;\n    transform-origin: center bottom;\n    z-index: 10;\n}\n\n.little-player-buffer-progress {\n    background-color: #838b8b;\n    position: absolute;\n    left:0;\n    top:0;\n    height: 100%;\n    transform-origin: center bottom;\n    z-index: 5;\n}\n\n.little-info-default {\n    color: #fff;\n}\n\n.little-info-active{\n    color: #4becff;\n}\n\n\n\n";
+  var css = "@keyframes music-dance {\n    0% {\n        -webkit-transform: scaleY(0);\n        transform: scaleY(0)\n    }\n\n    to {\n        -webkit-transform: scaleY(1);\n        transform: scaleY(1)\n    }\n}\n\n@keyframes title-dance {\n    0% {\n        -webkit-transform: translateX(100%);\n        transform: translateX(100%);\n    }\n\n    to {\n        -webkit-transform: translateX(-100%);\n        transform: translateX(-100%);\n    }\n}\n\n@keyframes progressThick {\n    0% {\n        height: 4px;\n    }\n\n    to {\n        height: 6px;\n    }\n}\n\n@keyframes progressNoneThick {\n    0% {\n        height: 6px;\n    }\n\n    to {\n        height: 4px;\n    }\n}\n\n\n.little-player-container{\n    position: relative;\n    display: flex;\n    flex-direction: column;\n    justify-content: flex-start;\n    align-items: center;\n    border: 1px solid hsla(0,0%,100%,.32);\n    box-sizing: border-box;\n    z-index: 10;\n    width: 135px;\n    height: auto;\n}\n\n.little-player-self{\n    width: 100%;\n    height: 32px;\n    display: flex;\n    flex-direction: row;\n    justify-content: flex-start;\n    align-items: center;\n}\n\n.little-player-controller{\n    position: relative;\n    width: 100%;\n    height: 135px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/manxian.jpg\");\n    background-size: cover;\n    background-position: 50%;\n    background-repeat: no-repeat;\n}\n\n\n.little-player-play-title {\n    font-size: 14px;\n    width: 100px;\n    height: 32px;\n    display: flex;\n    flex-direction: row;\n    align-items: center;\n    overflow: hidden;\n}\n\n.little-player-play-icon {\n    width: 32px;\n    height: 32px;\n    display: flex;\n    flex-direction: row;\n    justify-content: center;\n    align-items: center;\n}\n\n.little-player-column {\n    width: 2px;\n    height: 14px;\n    margin-right: 2px;\n    transform-origin: center bottom;\n    background-color: #fff;\n}\n\n.little-playing .little-player-column {\n    animation: music-dance 1s linear infinite;\n    animation-direction: reverse;\n}\n\n.hover .little-player-column {\n    width: 2px;\n    height: 14px;\n    margin-right: 2px;\n    transform-origin: center bottom;\n    /*animation: music-dance 1s linear infinite;*/\n    /*animation-direction: reverse;*/\n    background-color: #4becff;\n}\n\n.little-player-column:first-child {\n    transform: scaleY(0.25);\n}\n\n.little-player-column:nth-child(2) {\n    transform: scaleY(0.55);\n    animation-delay: .2s;\n}\n\n.little-player-column:nth-child(3) {\n    transform: scaleY(0.75);\n    animation-delay: .4s;\n}\n\n.little-player-column:last-child {\n    animation-delay: .6s;\n}\n\n.little-player-play-title{\n    overflow: hidden;\n}\n\n.little-player-play-title-prefix .little-player-play-title-box{\n    width: 100%;\n    animation: title-dance 5s linear infinite;\n}\n\n\n.little-player-control-wrap{\n    position: absolute;\n    width: 135px;\n    height: 32px;\n    bottom: 4px;\n    display: flex;\n    flex-direction: row;\n    justify-content: center;\n    align-items: center;\n}\n\n.little-control-before{\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/next.png\");\n    transform: rotate(180deg);\n}\n\n.little-control-before:hover{\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/before.png\");\n}\n\n.little-control-play {\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/play.png\");\n}\n\n.little-control-play:hover {\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/hover.png\");\n}\n\n.little-control-play-playing {\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/playing.png\");\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n}\n\n.little-control-play-playing:hover {\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/playing-ac.png\");\n\n}\n\n.little-control-after{\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/next.png\");\n}\n\n.little-control-after:hover{\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/before.png\");\n}\n\n.little-progress-wrap {\n    width: 100%;\n    height: 4px;\n    position: absolute;\n    left:0;\n    bottom:0;\n    background-color: #000;\n    cursor: pointer;\n    transform-origin: center bottom;\n    z-index: 0;\n}\n\n.thick {\n    animation: progressThick 0.15s forwards;\n}\n\n.none-thick {\n    animation: progressNoneThick 0.15s forwards;\n}\n\n.little-player-play-progress {\n    background-color: #3a91ff;\n    position: absolute;\n    left:0;\n    top:0;\n    height: 100%;\n    /*width: 50%;*/\n    transform-origin: center bottom;\n    z-index: 10;\n}\n\n.little-player-buffer-progress {\n    background-color: #838b8b;\n    position: absolute;\n    left:0;\n    top:0;\n    height: 100%;\n    transform-origin: center bottom;\n    z-index: 5;\n}\n\n.little-info-default {\n    color: #fff;\n}\n\n.little-info-active{\n    color: #4becff;\n}\n\n\n\n";
   styleInject(css);
 
   function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }

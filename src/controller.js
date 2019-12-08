@@ -12,43 +12,6 @@ export default class Controller {
     }
 
     init() {
-        this.player.options.autioElement = document.getElementById("little-player-audio");
-        this.player.options.titleElement = document.querySelector(".little-player-play-title-box");
-
-        // 进度条hover
-        this.player.options.progressWrapElement = document.querySelector('.little-progress-wrap');
-        this.player.options.progressWrapElement.addEventListener('mouseover',  ()  => {
-            if(this.player.options.progressWrapElement.classList.contains('none-thick')) {
-                this.player.options.progressWrapElement.classList.replace('none-thick', 'thick');
-            } else {
-                this.player.options.progressWrapElement.classList.add('thick');
-            }
-        });
-        this.player.options.progressWrapElement.addEventListener('mouseout', ()  => {
-            this.player.options.progressWrapElement.classList.replace('thick', 'none-thick');
-        });
-
-        // 信息hover
-        this.player.options.infoElement = document.querySelector('.little-player-self');
-        this.player.options.controlWrapElement = document.querySelector('.little-player-control-wrap');
-        const Addfn = ()  => {
-            this.player.options.infoElement.classList.replace('little-info-default', 'little-info-active');
-            this.player.options.infoElement.classList.add('hover');
-        };
-        const removeFn = ()  => {
-            this.player.options.infoElement.classList.replace('little-info-active', 'little-info-default');
-            this.player.options.infoElement.classList.remove('hover');
-        };
-
-        this.player.options.controlWrapElement.addEventListener('mouseover',  Addfn);
-        this.player.options.progressWrapElement.addEventListener('mouseover',  Addfn);
-
-        this.player.options.controlWrapElement.addEventListener('mouseout', removeFn);
-        this.player.options.progressWrapElement.addEventListener('mouseout', removeFn);
-
-        this.player.options.controlWrapElement = document.querySelector('.little-player-control-wrap');
-        this.player.options.controlPlayAndPauseElement = document.querySelector('.little-control-play');
-
         // 自动播放
         if(this.player.options.autoPlay) {
             this.play();
@@ -56,20 +19,46 @@ export default class Controller {
     }
 
     listen() {
+        // 音频时长
+        this.player.options.autioElement.addEventListener('canplay', () => {
+            this.player.options.duration = this.player.options.autioElement.duration;
+        });
+
+        // 进度变化
+        this.player.options.autioElement.addEventListener('timeupdate', () => {
+            this.player.emit('currentTime', this.player.options.autioElement.currentTime);
+        });
+
+        this.player.options.autioElement.addEventListener('ended', () => {
+            this.player.emit('ended', this.player.options.autioElement.currentTime);
+            this.pause();
+            this.seek(0);
+        });
+
+        // 播放器按钮
         this.player.options.controlPlayAndPauseElement.addEventListener('click', () => {
             if(this.player.options.playing) {
                 this.pause();
             } else {
                 this.play();
             }
-        })
+        });
+
+        this.player.options.progressWrapElement.addEventListener('click', (event) => {
+            const clientX = event.clientX;
+            const rect = this.player.options.progressWrapElement.getBoundingClientRect();
+
+            const totalX = this.player.options.progressWrapElement.clientWidth;
+            const seekTime = (clientX - rect.left) / totalX * this.player.options.duration;
+            this.seek(seekTime);
+        });
     };
 
     setSource(target) {
         errorHandle(target && target.url, 'audio url is invalid!');
         this.player.options.autioElement.setAttribute('src', target.url);
         this.player.options.autioElement.load();
-        this.player.options.titleElement.innerHTML = this.player.options.title;
+        this.player.options.titleBoxElement.innerHTML = this.player.options.title;
     }
 
     play() {
@@ -84,11 +73,17 @@ export default class Controller {
             this.player.options.playing = true;
         }, 0);
         this.player.options.controlPlayAndPauseElement.classList.replace('little-control-play', 'little-control-play-playing');
+        this.player.options.audioIconElement.classList.add('little-playing');
     }
 
     pause() {
         this.player.options.autioElement.pause();
         this.player.options.playing = false;
         this.player.options.controlPlayAndPauseElement.classList.replace('little-control-play-playing', 'little-control-play');
+        this.player.options.audioIconElement.classList.remove('little-playing');
+    }
+
+    seek(time) {
+        this.player.options.autioElement.currentTime = time;
     }
 }
