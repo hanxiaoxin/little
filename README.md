@@ -13,7 +13,7 @@ import LittlePlayer from 'little';
 var player = new LittlePlayer(
     {
         container: document.getElementById("littleBox"),
-        autoPlay: true //自动播放
+        autoPlay: false // 自动播放受到最近浏览器限制，开启暂时不生效
     }
 )
 ```
