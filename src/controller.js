@@ -31,8 +31,9 @@ export default class Controller {
 
         this.player.options.autioElement.addEventListener('ended', () => {
             this.player.emit('ended', this.player.options.autioElement.currentTime);
-            this.pause();
-            this.seek(0);
+            this.player.loader.next();
+            /*this.pause();
+            this.seek(0);*/
         });
 
         // 播放器按钮
@@ -44,6 +45,7 @@ export default class Controller {
             }
         });
 
+        // 进度跳转
         this.player.options.progressWrapElement.addEventListener('click', (event) => {
             const clientX = event.clientX;
             const rect = this.player.options.progressWrapElement.getBoundingClientRect();
@@ -52,13 +54,20 @@ export default class Controller {
             const seekTime = (clientX - rect.left) / totalX * this.player.options.duration;
             this.seek(seekTime);
         });
+
+        // 切换播放列表
+        this.player.on('loadEnd', (info) => {
+            const cover = info.cover || this.player.options.defaultCover;
+            this.player.options.controllerElement.style.backgroundImage = "url(" + cover + ")";
+            this.play();
+        });
     };
 
-    setSource(target) {
-        errorHandle(target && target.url, 'audio url is invalid!');
-        this.player.options.autioElement.setAttribute('src', target.url);
+    setSource(url) {
+        errorHandle(url, 'audio url is invalid!');
+        this.player.options.autioElement.setAttribute('src', url);
         this.player.options.autioElement.load();
-        this.player.options.titleBoxElement.innerHTML = this.player.options.title;
+        this.player.options.titleBoxElement.innerHTML = this.player.loader.currentPlayInfo.title;
     }
 
     play() {

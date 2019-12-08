@@ -39,6 +39,7 @@ export default class Template {
     }
 
     listen() {
+        this.player.options.containerElement = document.querySelector('.little-player-container');
         this.player.options.autioElement = document.getElementById("little-player-audio");
         this.player.options.titleBoxElement = document.querySelector(".little-player-play-title-box");
         this.player.options.titleElement = document.querySelector('.little-player-play-title');
@@ -46,7 +47,10 @@ export default class Template {
         this.player.options.progressElement = document.querySelector('.little-player-play-progress');
         this.player.options.progressWrapElement = document.querySelector('.little-progress-wrap');
         this.player.options.infoElement = document.querySelector('.little-player-self');
+        this.player.options.controllerElement = document.querySelector('.little-player-controller');
         this.player.options.controlWrapElement = document.querySelector('.little-player-control-wrap');
+        this.player.options.controlBeforeElement = document.querySelector('.little-control-before');
+        this.player.options.controlAfterElement = document.querySelector('.little-control-after');
 
         // 进度条hover
         this.player.options.progressWrapElement.addEventListener('mouseover',  ()  => {
@@ -79,12 +83,34 @@ export default class Template {
         this.player.options.controlWrapElement = document.querySelector('.little-player-control-wrap');
         this.player.options.controlPlayAndPauseElement = document.querySelector('.little-control-play');
 
+        // 显示控制区
+        window.addEventListener('click', (event) => {
+           console.log(event, event.target);
+           if(!this.player.options.containerElement.contains(event.target)) {
+               this.player.options.controllerElement.classList.replace('little-player-controller-hover', 'little-player-controller-hide');
+           }
+        });
+
+        this.player.options.infoElement.addEventListener('mouseover',  () => {
+            this.player.options.controllerElement.classList.remove('little-player-controller-hide');
+            this.player.options.controllerElement.classList.add('little-player-controller-hover');
+        });
+
         // 进度条计算
         const TotalWidth = this.player.options.progressWrapElement.clientWidth;
         this.player.on('currentTime', (currentTime) => {
             const duration = this.player.options.duration;
             const width = currentTime / duration * TotalWidth;
             this.player.options.progressElement.style.width = width+ 'px';
+        });
+
+        // 上一首 下一首
+        this.player.options.controlBeforeElement.addEventListener('click', (event) => {
+           this.player.emit('prevMusic', event);
+        });
+
+        this.player.options.controlAfterElement.addEventListener('click', (event) => {
+            this.player.emit('nextMusic', event);
         });
     }
 

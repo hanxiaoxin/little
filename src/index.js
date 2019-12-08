@@ -58,6 +58,7 @@ export default class LittlePlayer  extends Emitter {
             pixelRatio: window.devicePixelRatio,
             autoPlay: false, // 自动播放
             playing:  false, // 是否正在播放
+            defaultCover: 'https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/covers/break-out.png', // 默认封面
         };
     }
 
@@ -103,7 +104,8 @@ export default class LittlePlayer  extends Emitter {
             waveScale: checkNum('waveScale', 0.1, 10, false),
             pixelRatio: checkNum('pixelRatio', 1, 10, false),
             autoPlay: 'boolean',
-            playing: 'boolean'
+            playing: 'boolean',
+            defaultCover: 'string'
         };
     }
 

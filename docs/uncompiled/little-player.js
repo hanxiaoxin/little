@@ -380,6 +380,7 @@
       value: function listen() {
         var _this = this;
 
+        this.player.options.containerElement = document.querySelector('.little-player-container');
         this.player.options.autioElement = document.getElementById("little-player-audio");
         this.player.options.titleBoxElement = document.querySelector(".little-player-play-title-box");
         this.player.options.titleElement = document.querySelector('.little-player-play-title');
@@ -387,7 +388,10 @@
         this.player.options.progressElement = document.querySelector('.little-player-play-progress');
         this.player.options.progressWrapElement = document.querySelector('.little-progress-wrap');
         this.player.options.infoElement = document.querySelector('.little-player-self');
-        this.player.options.controlWrapElement = document.querySelector('.little-player-control-wrap'); // 进度条hover
+        this.player.options.controllerElement = document.querySelector('.little-player-controller');
+        this.player.options.controlWrapElement = document.querySelector('.little-player-control-wrap');
+        this.player.options.controlBeforeElement = document.querySelector('.little-control-before');
+        this.player.options.controlAfterElement = document.querySelector('.little-control-after'); // 进度条hover
 
         this.player.options.progressWrapElement.addEventListener('mouseover', function () {
           if (_this.player.options.progressWrapElement.classList.contains('none-thick')) {
@@ -417,13 +421,33 @@
         this.player.options.controlWrapElement.addEventListener('mouseout', removeFn);
         this.player.options.progressWrapElement.addEventListener('mouseout', removeFn);
         this.player.options.controlWrapElement = document.querySelector('.little-player-control-wrap');
-        this.player.options.controlPlayAndPauseElement = document.querySelector('.little-control-play'); // 进度条计算
+        this.player.options.controlPlayAndPauseElement = document.querySelector('.little-control-play'); // 显示控制区
+
+        window.addEventListener('click', function (event) {
+          console.log(event, event.target);
+
+          if (!_this.player.options.containerElement.contains(event.target)) {
+            _this.player.options.controllerElement.classList.replace('little-player-controller-hover', 'little-player-controller-hide');
+          }
+        });
+        this.player.options.infoElement.addEventListener('mouseover', function () {
+          _this.player.options.controllerElement.classList.remove('little-player-controller-hide');
+
+          _this.player.options.controllerElement.classList.add('little-player-controller-hover');
+        }); // 进度条计算
 
         var TotalWidth = this.player.options.progressWrapElement.clientWidth;
         this.player.on('currentTime', function (currentTime) {
           var duration = _this.player.options.duration;
           var width = currentTime / duration * TotalWidth;
           _this.player.options.progressElement.style.width = width + 'px';
+        }); // 上一首 下一首
+
+        this.player.options.controlBeforeElement.addEventListener('click', function (event) {
+          _this.player.emit('prevMusic', event);
+        });
+        this.player.options.controlAfterElement.addEventListener('click', function (event) {
+          _this.player.emit('nextMusic', event);
         });
       }
     }, {
@@ -502,9 +526,10 @@
         this.player.options.autioElement.addEventListener('ended', function () {
           _this.player.emit('ended', _this.player.options.autioElement.currentTime);
 
-          _this.pause();
+          _this.player.loader.next();
+          /*this.pause();
+          this.seek(0);*/
 
-          _this.seek(0);
         }); // 播放器按钮
 
         this.player.options.controlPlayAndPauseElement.addEventListener('click', function () {
@@ -513,7 +538,8 @@
           } else {
             _this.play();
           }
-        });
+        }); // 进度跳转
+
         this.player.options.progressWrapElement.addEventListener('click', function (event) {
           var clientX = event.clientX;
 
@@ -523,15 +549,22 @@
           var seekTime = (clientX - rect.left) / totalX * _this.player.options.duration;
 
           _this.seek(seekTime);
+        }); // 切换播放列表
+
+        this.player.on('loadEnd', function (info) {
+          var cover = info.cover || _this.player.options.defaultCover;
+          _this.player.options.controllerElement.style.backgroundImage = "url(" + cover + ")";
+
+          _this.play();
         });
       }
     }, {
       key: "setSource",
-      value: function setSource(target) {
-        errorHandle(target && target.url, 'audio url is invalid!');
-        this.player.options.autioElement.setAttribute('src', target.url);
+      value: function setSource(url) {
+        errorHandle(url, 'audio url is invalid!');
+        this.player.options.autioElement.setAttribute('src', url);
         this.player.options.autioElement.load();
-        this.player.options.titleBoxElement.innerHTML = this.player.options.title;
+        this.player.options.titleBoxElement.innerHTML = this.player.loader.currentPlayInfo.title;
       }
     }, {
       key: "play",
@@ -570,9 +603,6 @@
     return Controller;
   }();
 
-  /**
-   * 加载器
-   */
   var Loader =
   /*#__PURE__*/
   function () {
@@ -582,19 +612,64 @@
       this.player = player;
       this.fileSize = 0;
       this.loadSize = 0;
+      this.playListIndex = 0; // 播放序号
+
       this.data = new Uint8Array();
       this.reader = null;
       this.abortController = null;
+      this.listen();
     }
 
     createClass(Loader, [{
+      key: "listen",
+      value: function listen() {
+        var _this = this;
+
+        this.player.on('prevMusic', function () {
+          var nextIndex = _this.playListIndex - 1 < 0 ? _this.playList.length - 1 : _this.playListIndex - 1;
+
+          _this.next(nextIndex);
+        });
+        this.player.on('nextMusic', function () {
+          var nextIndex = (_this.playListIndex + 1) % _this.playList.length;
+
+          _this.next(nextIndex);
+        });
+      }
+      /**
+       * 初始化音乐列表
+       * @param playList
+       */
+
+    }, {
       key: "load",
-      value: function load(target) {
+      value: function load(playList) {
         this.destroy(); // about controller ??
 
         this.abortController = new AbortController();
-        this.player.setOptions(target);
-        this.player.controller.setSource(target);
+        errorHandle(playList || playList.length === 0, '音乐列表初始化失败!');
+        this.playList = playList;
+        this.next(0);
+      }
+    }, {
+      key: "next",
+      value: function next(index) {
+        if (index === 0) {
+          this.playListIndex = 0;
+        } else if (!index) {
+          this.playListIndex = ++this.playListIndex % this.playList.length;
+        } else {
+          this.playListIndex = index;
+        }
+
+        this.start();
+      }
+    }, {
+      key: "start",
+      value: function start() {
+        this.currentPlayInfo = this.playList[this.playListIndex];
+        this.player.controller.setSource(this.currentPlayInfo.url);
+        this.player.emit('loadEnd', this.currentPlayInfo);
       }
     }, {
       key: "destroy",
@@ -645,7 +720,7 @@
     }
   }
 
-  var css = "@keyframes music-dance {\n    0% {\n        -webkit-transform: scaleY(0);\n        transform: scaleY(0)\n    }\n\n    to {\n        -webkit-transform: scaleY(1);\n        transform: scaleY(1)\n    }\n}\n\n@keyframes title-dance {\n    0% {\n        -webkit-transform: translateX(100%);\n        transform: translateX(100%);\n    }\n\n    to {\n        -webkit-transform: translateX(-100%);\n        transform: translateX(-100%);\n    }\n}\n\n@keyframes progressThick {\n    0% {\n        height: 4px;\n    }\n\n    to {\n        height: 6px;\n    }\n}\n\n@keyframes progressNoneThick {\n    0% {\n        height: 6px;\n    }\n\n    to {\n        height: 4px;\n    }\n}\n\n\n.little-player-container{\n    position: relative;\n    display: flex;\n    flex-direction: column;\n    justify-content: flex-start;\n    align-items: center;\n    border: 1px solid hsla(0,0%,100%,.32);\n    box-sizing: border-box;\n    z-index: 10;\n    width: 135px;\n    height: auto;\n}\n\n.little-player-self{\n    width: 100%;\n    height: 32px;\n    display: flex;\n    flex-direction: row;\n    justify-content: flex-start;\n    align-items: center;\n}\n\n.little-player-controller{\n    position: relative;\n    width: 100%;\n    height: 135px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/manxian.jpg\");\n    background-size: cover;\n    background-position: 50%;\n    background-repeat: no-repeat;\n}\n\n\n.little-player-play-title {\n    font-size: 14px;\n    width: 100px;\n    height: 32px;\n    display: flex;\n    flex-direction: row;\n    align-items: center;\n    overflow: hidden;\n}\n\n.little-player-play-icon {\n    width: 32px;\n    height: 32px;\n    display: flex;\n    flex-direction: row;\n    justify-content: center;\n    align-items: center;\n}\n\n.little-player-column {\n    width: 2px;\n    height: 14px;\n    margin-right: 2px;\n    transform-origin: center bottom;\n    background-color: #fff;\n}\n\n.little-playing .little-player-column {\n    animation: music-dance 1s linear infinite;\n    animation-direction: reverse;\n}\n\n.hover .little-player-column {\n    width: 2px;\n    height: 14px;\n    margin-right: 2px;\n    transform-origin: center bottom;\n    /*animation: music-dance 1s linear infinite;*/\n    /*animation-direction: reverse;*/\n    background-color: #4becff;\n}\n\n.little-player-column:first-child {\n    transform: scaleY(0.25);\n}\n\n.little-player-column:nth-child(2) {\n    transform: scaleY(0.55);\n    animation-delay: .2s;\n}\n\n.little-player-column:nth-child(3) {\n    transform: scaleY(0.75);\n    animation-delay: .4s;\n}\n\n.little-player-column:last-child {\n    animation-delay: .6s;\n}\n\n.little-player-play-title{\n    overflow: hidden;\n}\n\n.little-player-play-title-prefix .little-player-play-title-box{\n    width: 100%;\n    animation: title-dance 5s linear infinite;\n}\n\n\n.little-player-control-wrap{\n    position: absolute;\n    width: 135px;\n    height: 32px;\n    bottom: 4px;\n    display: flex;\n    flex-direction: row;\n    justify-content: center;\n    align-items: center;\n}\n\n.little-control-before{\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/next.png\");\n    transform: rotate(180deg);\n}\n\n.little-control-before:hover{\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/before.png\");\n}\n\n.little-control-play {\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/play.png\");\n}\n\n.little-control-play:hover {\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/hover.png\");\n}\n\n.little-control-play-playing {\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/playing.png\");\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n}\n\n.little-control-play-playing:hover {\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/playing-ac.png\");\n\n}\n\n.little-control-after{\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/next.png\");\n}\n\n.little-control-after:hover{\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/before.png\");\n}\n\n.little-progress-wrap {\n    width: 100%;\n    height: 4px;\n    position: absolute;\n    left:0;\n    bottom:0;\n    background-color: #000;\n    cursor: pointer;\n    transform-origin: center bottom;\n    z-index: 0;\n}\n\n.thick {\n    animation: progressThick 0.15s forwards;\n}\n\n.none-thick {\n    animation: progressNoneThick 0.15s forwards;\n}\n\n.little-player-play-progress {\n    background-color: #3a91ff;\n    position: absolute;\n    left:0;\n    top:0;\n    height: 100%;\n    /*width: 50%;*/\n    transform-origin: center bottom;\n    z-index: 10;\n}\n\n.little-player-buffer-progress {\n    background-color: #838b8b;\n    position: absolute;\n    left:0;\n    top:0;\n    height: 100%;\n    transform-origin: center bottom;\n    z-index: 5;\n}\n\n.little-info-default {\n    color: #fff;\n}\n\n.little-info-active{\n    color: #4becff;\n}\n\n\n\n";
+  var css = "@keyframes music-dance {\n    0% {\n        -webkit-transform: scaleY(0);\n        transform: scaleY(0)\n    }\n\n    to {\n        -webkit-transform: scaleY(1);\n        transform: scaleY(1)\n    }\n}\n\n@keyframes title-dance {\n    0% {\n        -webkit-transform: translateX(100%);\n        transform: translateX(100%);\n    }\n\n    to {\n        -webkit-transform: translateX(-100%);\n        transform: translateX(-100%);\n    }\n}\n\n@keyframes progressThick {\n    0% {\n        height: 4px;\n    }\n\n    to {\n        height: 6px;\n    }\n}\n\n@keyframes progressNoneThick {\n    0% {\n        height: 6px;\n    }\n\n    to {\n        height: 4px;\n    }\n}\n\n@keyframes controllerDance {\n    0% {\n        height: 0;\n    }\n\n    to {\n        height: 135px;\n    }\n}\n\n@keyframes controllerHide {\n    to {\n        height: 0;\n    }\n\n    from {\n        height: 135px;\n    }\n}\n\n\n.little-player-container{\n    position: relative;\n    display: flex;\n    flex-direction: column;\n    justify-content: flex-start;\n    align-items: center;\n    border: 1px solid hsla(0,0%,100%,.32);\n    box-sizing: border-box;\n    z-index: 10;\n    width: 135px;\n    height: auto;\n}\n\n.little-player-self{\n    width: 100%;\n    height: 32px;\n    display: flex;\n    flex-direction: row;\n    justify-content: flex-start;\n    align-items: center;\n    overflow: hidden;\n}\n\n.little-player-controller {\n    position: relative;\n    width: 100%;\n    height: 0;\n    overflow: hidden;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/covers/break-out.png\");\n    background-size: cover;\n    background-position: 50%;\n    background-repeat: no-repeat;\n}\n\n.little-player-controller-hover {\n    animation: controllerDance 0.3s ease-in-out forwards;\n}\n\n.little-player-controller-hide{\n    animation: controllerHide 0.3s ease-in-out forwards;\n}\n\n\n.little-player-play-title {\n    font-size: 14px;\n    min-width: 100%;\n    height: 32px;\n    display: flex;\n    flex-direction: row;\n    align-items: center;\n    overflow: hidden;\n    flex-shrink: 0;\n}\n\n.little-player-play-icon {\n    width: 32px;\n    height: 32px;\n    display: flex;\n    flex-direction: row;\n    justify-content: center;\n    align-items: center;\n    flex-shrink: 0;\n}\n\n.little-player-column {\n    width: 2px;\n    height: 14px;\n    margin-right: 2px;\n    transform-origin: center bottom;\n    background-color: #fff;\n}\n\n.little-playing .little-player-column {\n    animation: music-dance 1s linear infinite;\n    animation-direction: reverse;\n}\n\n.hover .little-player-column {\n    width: 2px;\n    height: 14px;\n    margin-right: 2px;\n    transform-origin: center bottom;\n    /*animation: music-dance 1s linear infinite;*/\n    /*animation-direction: reverse;*/\n    background-color: #4becff;\n}\n\n.little-player-column:first-child {\n    transform: scaleY(0.25);\n}\n\n.little-player-column:nth-child(2) {\n    transform: scaleY(0.55);\n    animation-delay: .2s;\n}\n\n.little-player-column:nth-child(3) {\n    transform: scaleY(0.75);\n    animation-delay: .4s;\n}\n\n.little-player-column:last-child {\n    animation-delay: .6s;\n}\n\n.little-player-play-title{\n    overflow: hidden;\n}\n\n.little-player-play-title-prefix .little-player-play-title-box{\n    width: 100%;\n    animation: title-dance 5s linear infinite;\n}\n\n\n.little-player-control-wrap{\n    position: absolute;\n    width: 135px;\n    height: 32px;\n    bottom: 4px;\n    display: flex;\n    flex-direction: row;\n    justify-content: center;\n    align-items: center;\n}\n\n.little-control-before{\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/next.png\");\n    transform: rotate(180deg);\n}\n\n.little-control-before:hover{\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/before.png\");\n}\n\n.little-control-play {\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/play.png\");\n}\n\n.little-control-play:hover {\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/hover.png\");\n}\n\n.little-control-play-playing {\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/playing.png\");\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n}\n\n.little-control-play-playing:hover {\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/playing-ac.png\");\n\n}\n\n.little-control-after{\n    cursor: pointer;\n    width: 45px;\n    height: 32px;\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/next.png\");\n}\n\n.little-control-after:hover{\n    background-image: url(\"https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/before.png\");\n}\n\n.little-progress-wrap {\n    width: 100%;\n    height: 4px;\n    position: absolute;\n    left:0;\n    bottom:0;\n    background-color: #000;\n    cursor: pointer;\n    transform-origin: center bottom;\n    z-index: 0;\n}\n\n.thick {\n    animation: progressThick 0.15s forwards;\n}\n\n.none-thick {\n    animation: progressNoneThick 0.15s forwards;\n}\n\n.little-player-play-progress {\n    background-color: #3a91ff;\n    position: absolute;\n    left:0;\n    top:0;\n    height: 100%;\n    /*width: 50%;*/\n    transform-origin: center bottom;\n    z-index: 10;\n}\n\n.little-player-buffer-progress {\n    background-color: #838b8b;\n    position: absolute;\n    left:0;\n    top:0;\n    height: 100%;\n    transform-origin: center bottom;\n    z-index: 5;\n}\n\n.little-info-default {\n    color: #fff;\n}\n\n.little-info-active{\n    color: #4becff;\n}\n\n\n\n";
   styleInject(css);
 
   function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -711,7 +786,9 @@
           pixelRatio: window.devicePixelRatio,
           autoPlay: false,
           // 自动播放
-          playing: false // 是否正在播放
+          playing: false,
+          // 是否正在播放
+          defaultCover: 'https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/covers/break-out.png' // 默认封面
 
         };
       }
@@ -757,7 +834,8 @@
           waveScale: checkNum('waveScale', 0.1, 10, false),
           pixelRatio: checkNum('pixelRatio', 1, 10, false),
           autoPlay: 'boolean',
-          playing: 'boolean'
+          playing: 'boolean',
+          defaultCover: 'string'
         };
       }
     }]);
