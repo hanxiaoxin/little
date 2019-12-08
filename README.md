@@ -3,7 +3,15 @@
 
 [示例地址demo](http://47.98.226.15/little/)
 
+[npm地址](https://www.npmjs.com/package/@nankle/little)
+
 ### API
+
+Install
+
+```javascript
+npm i @nankle/little
+```
 
 Options
 
