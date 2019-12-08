@@ -5,6 +5,8 @@
 
 [npm地址](https://www.npmjs.com/package/@nankle/little)
 
+<img src="https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/little.png" width="350px" alt="demo">
+
 ### API
 
 Install
@@ -16,7 +18,7 @@ npm i @nankle/little
 Options
 
 ```javascript
-import LittlePlayer from 'little';
+import LittlePlayer from '@nankle/little';
 
 var player = new LittlePlayer(
     {
