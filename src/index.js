@@ -60,6 +60,7 @@ export default class LittlePlayer  extends Emitter {
             autoPlay: false, // 自动播放
             playing:  false, // 是否正在播放
             defaultCover: 'https://blog-1251618686.cos.ap-guangzhou.myqcloud.com/abouts/covers/break-out.png', // 默认封面
+            alwaysShowPlayer: false, // 是否默认显示封面
         };
     }
 
@@ -107,7 +108,8 @@ export default class LittlePlayer  extends Emitter {
             autoPlay: 'boolean',
             playing: 'boolean',
             defaultCover: 'string',
-            firstPlay: 'boolean'
+            firstPlay: 'boolean',
+            alwaysShowPlayer: 'boolean'
         };
     }
 

@@ -84,9 +84,14 @@ export default class Template {
         this.player.options.controlPlayAndPauseElement = document.querySelector('.little-control-play');
 
         // 显示控制区
+        if(this.player.options.alwaysShowPlayer){
+            this.player.options.controllerElement.classList.remove('little-player-controller-hide');
+            this.player.options.controllerElement.classList.add('little-player-controller-hover');
+        }
+
         window.addEventListener('click', (event) => {
            // console.log(event, event.target);
-           if(!this.player.options.containerElement.contains(event.target)) {
+           if(!this.player.options.alwaysShowPlayer && !this.player.options.containerElement.contains(event.target)) {
                this.player.options.controllerElement.classList.replace('little-player-controller-hover', 'little-player-controller-hide');
            }
         });
