@@ -1,7 +1,7 @@
 ## LittlePlayer 音乐播放器
 
 
-[示例地址demo](http://47.98.226.15/little/)
+[示例地址demo](http://little.hanlinbo.top/)
 
 [npm地址](./docs/demo.png)
 
